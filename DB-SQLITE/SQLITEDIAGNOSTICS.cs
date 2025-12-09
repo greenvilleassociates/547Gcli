@@ -10,9 +10,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Query;
 
 // MyClass.cs using System; 
-namespace T4DBMSSQL
+namespace T4DBSQLITE
 {
-    class T4MSSQL
+    class T4SQLITE
         {
             // Test The Use of a Namespace Class Function;
 

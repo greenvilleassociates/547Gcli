@@ -16,7 +16,7 @@ using T4MSSQLINSTALLER;
 using static T4DATA.T4LISTS;
 using Google.Protobuf.Collections;
 
-namespace MENUSYSTEM37
+namespace MENUSYSTEM137SQLITE
 {
     public class Menu37
     {

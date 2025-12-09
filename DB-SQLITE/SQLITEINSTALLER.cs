@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 using System.Linq;
 
 
-namespace T4MSSQLINSTALLER
+namespace T4SQLITEINSTALLER
 {
 
-    public class MSSQLINSTALLER
+    public class SQLITEINSTALLER
     {
         public static void createmssqldb()
         {

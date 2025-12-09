@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
-using Npgsql;
+//using Npgsql;
 using System;
 
 
@@ -15,7 +15,7 @@ namespace T4PGSQLINSTALLER
 
 public class PGSQLINSTALLER
     {
-
+/*
     public static void CreateDatabase()
     {
         string connectionString = "Host=10.144.0.100;Port=5434;Username=postgres;Password=yourpassword;Database=postgres";
@@ -77,7 +77,7 @@ public class PGSQLINSTALLER
     }
 }
 
-        }
+        }*/
     }
 }
-    
+

@@ -10,11 +10,10 @@ using MySql.Data.MySqlClient;
 using T4DATA;
 using T4DBMYSQL;
 using T4DBMSSQL;
-using T4DBPGSQL;
-using T4DATA;
+//using T4DBPGSQL;
 using T4MYSQLINSTALLER;
 using T4MSSQLINSTALLER;
-using T4PGLINSTALLER;
+//using T4PGLINSTALLER;
 using static T4DATA.T4LISTS;
 using Google.Protobuf.Collections;
 

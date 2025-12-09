@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CM.API.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.VisualBasic;
 using Org.BouncyCastle.Asn1.X509;
