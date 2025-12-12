@@ -7,12 +7,12 @@ using System.Diagnostics;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Query;
 using MySql.Data.MySqlClient;
-using T4DATA;
+using T4DATAMOVIES;
 using T4DBMYSQL;
 using T4MYSQLINSTALLER;
 using T4SQLITEINSTALLER;
 //using T4PGLINSTALLER;
-using static T4DATA.T4LISTS;
+using static T4DATAMOVIES.T4LISTS;
 using Google.Protobuf.Collections;
 
 namespace MENUSYSTEM34
