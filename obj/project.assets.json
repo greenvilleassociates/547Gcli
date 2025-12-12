@@ -7076,9 +7076,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "X:\\G547\\547Gcli\\apitester.csproj",
-      "projectName": "apitester",
-      "projectPath": "X:\\G547\\547Gcli\\apitester.csproj",
+      "projectUniqueName": "X:\\G547\\547Gcli\\Parks.csproj",
+      "projectName": "Parks",
+      "projectPath": "X:\\G547\\547Gcli\\Parks.csproj",
       "packagesPath": "C:\\Users\\stritzj\\.nuget\\packages\\",
       "outputPath": "X:\\G547\\547Gcli\\obj\\",
       "projectStyle": "PackageReference",

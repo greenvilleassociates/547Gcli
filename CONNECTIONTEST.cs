@@ -14,20 +14,18 @@ namespace CONNECTIONTEST
             int exit = 0;
             do
             {
-            Console.WriteLine("\nGEM [V6.01] Installation and Maintenance Utilities");
-            Console.WriteLine("Would You Like to Run Tests To Your SQL Servers?");
-            Console.WriteLine("GEM Uses a React & ASPX FrontEnd, RESTBackEnd, ASP.NET->LanManager, and Integrating COTS Demonstrating The Breadth of Our Team Skills.");
+            Console.WriteLine("\nSystem Utilities: Parks [V3.01] Installation and Maintenance.");
+            Console.WriteLine("Parks Uses a React & HTML FrontEnd, C# RESTBackEnd.");
             Console.WriteLine("Please Enter Your Choice:");
             Console.WriteLine("1. Press One to Test Your MySQL Server:");
-            Console.WriteLine("2. Press Two to Test Your MSSQL Server:");
-            Console.WriteLine("3. Press Three to Test Your MSSQL Server:");
+            Console.WriteLine("2. Press Two to Test Your SQLITE Server:");
             Console.WriteLine("4. Test All Server Types:");
             Console.WriteLine("99.Exit:");
             Console.WriteLine("Please Enter Your Choice(1,2,3,4,99):\n");
             string youranswer = Console.ReadLine();
             if (youranswer == "1")
             {
-                pingmssql();
+                pingsqlite();
             }
             else if (youranswer == "2")
             {
@@ -36,12 +34,12 @@ namespace CONNECTIONTEST
             else if (youranswer == "3")
             {
                 pingmysql();
-                pingmssql();
+                pingsqlite();
             }
             else if (youranswer == "4")
             {
                 pingmysql();
-                pingmssql();
+                pingsqlite();
             }    
             else if (youranswer == "99")
             {
@@ -62,8 +60,8 @@ namespace CONNECTIONTEST
         {
             Console.WriteLine("MYSQL: This program runs an MS-PS Connection Test to the Current DBMS Port And Returns the Results To The Screen");
             // Define the server name and port
-            string server = "127.0.0.1";
-            int port = 3307;
+            string server = "parks.547bikes.info";
+            int port = 80;
 
             // Create the PowerShell command
             string command = $"Test-NetConnection -ComputerName {server} -Port {port}";
@@ -88,12 +86,12 @@ namespace CONNECTIONTEST
            
         }
 
-        static public void pingmssql()
+        static public void pingsqlite()
         {
-                Console.WriteLine("MSSQL:This program runs an MS-PS Connection Test And Returns the Results To The Screen");
+                Console.WriteLine("SQLITE:This program runs an MS-PS Connection Test And Returns the Results To The Screen");
                 // Define the server name and port
-                string server = "127.0.0.1";
-                int port = 1433;
+                string server = "parksapi.547bikes.info";
+                int port = 443;
 
                 // Create the PowerShell command
                 string command = $"Test-NetConnection -ComputerName {server} -Port {port}";

@@ -1,0 +1,6 @@
+X:\G547\547Gcli\obj\Debug\net9.0\Parks.csproj.AssemblyReference.cache
+X:\G547\547Gcli\obj\Debug\net9.0\Parks.GeneratedMSBuildEditorConfig.editorconfig
+X:\G547\547Gcli\obj\Debug\net9.0\Parks.AssemblyInfoInputs.cache
+X:\G547\547Gcli\obj\Debug\net9.0\Parks.AssemblyInfo.cs
+X:\G547\547Gcli\obj\Debug\net9.0\Parks.csproj.CoreCompileInputs.cache
+X:\G547\547Gcli\obj\Debug\net9.0\Parks.sourcelink.json

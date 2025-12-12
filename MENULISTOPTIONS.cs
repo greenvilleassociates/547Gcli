@@ -9,10 +9,9 @@ using Microsoft.EntityFrameworkCore.Query;
 using MySql.Data.MySqlClient;
 using T4DATA;
 using T4DBMYSQL;
-using T4DBMSSQL;
-using T4PGSQLINSTALLER;
+using T4DBSQLITE;
 using T4MYSQLINSTALLER;
-using T4MSSQLINSTALLER;
+using T4SQLITEINSTALLER;
 using static T4DATA.T4LISTS;
 using Google.Protobuf.Collections;
 
@@ -42,7 +41,7 @@ namespace MENUSYSTEM33
                 Console.WriteLine("2.Users:");
                 Console.WriteLine("3.CartMasters:");
                 Console.WriteLine("4.Employees:");
-                Console.WriteLine("5.Regions:");
+                Console.WriteLine("5.Bookings:");
                 Console.WriteLine("99.Exit:");
                 Console.WriteLine("Please Enter Your Choice(1,2,3,4,5,99(Exit):\n");
                 string somestring = "1";
@@ -80,14 +79,14 @@ namespace MENUSYSTEM33
                 }
                 else if (number == 4)
                 {
-                    Console.WriteLine("You Choose Option: 4-Showtimes\n");
+                    Console.WriteLine("You Choose Option: 4-Employees\n");
                     Console.WriteLine(String.Join("\n", OurLists2.employees));
                     Console.WriteLine("\n\n");
                     exit = 4;
                 }
                 else if (number == 5)
                 {
-                    Console.WriteLine("You Choose Option: 5-Regions\n");
+                    Console.WriteLine("You Choose Option: 5-Bookings\n");
                     Console.WriteLine(String.Join("\n", OurLists2.regions));
                     Console.WriteLine("\n\n");
                     exit = 5;
