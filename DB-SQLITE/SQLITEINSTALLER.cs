@@ -1,95 +1,254 @@
 ﻿using System;
-using System.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq;
-
+using System.IO;
+using Microsoft.Data.Sqlite;
 
 namespace T4SQLITEINSTALLER
 {
-
-    public class SQLITEINSTALLER
+    public static class SQLITEINSTALLER
     {
-        public static void createmssqldb()
+        // Creates/opens ./SQLDATA/parks.db and ensures tables exist
+        public static void createsqlitedb(string dbFileName = "parks.db")
         {
-            string connectionString = "Data Source=TEAM4LAB2\\COCKYMSSQL;Initial Catalog=COCKY;Integrated Security=True;";
-            Console.WriteLine("Your Current Connection String is:" + connectionString + "If This is incorrect your installation will give an error.");
-            SqlConnection connection = new SqlConnection(connectionString);
+            // Ensure ./SQLDATA directory exists
+            Directory.CreateDirectory("SQLDATA");
+            var fullPath = Path.GetFullPath(Path.Combine("SQLDATA", dbFileName));
+            Console.WriteLine($"SQLite database file path: {fullPath}");
+
+            var connectionString = $"Data Source={fullPath};";
+            using var connection = new SqliteConnection(connectionString);
 
             try
             {
                 connection.Open();
 
-                // Create database
-                string createDbQuery = "IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = N'COCKY') CREATE DATABASE COCKY;";
-                SqlCommand command = new SqlCommand(createDbQuery, connection);
-                command.ExecuteNonQuery();
-                Console.WriteLine("Database created successfully OR Already Exists.");
+                // Enable foreign keys
+                using (var pragma = connection.CreateCommand())
+                {
+                    pragma.CommandText = "PRAGMA foreign_keys = ON;";
+                    pragma.ExecuteNonQuery();
+                }
 
-                // Switch to the new database
-                connection.ChangeDatabase("COCKY");
+                // Parks table
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS Parks (
+                        ParkID INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Name TEXT,
+                        Address TEXT,
+                        Phone TEXT,
+                        Region TEXT,
+                        TrailLengthMiles REAL,
+                        Difficulty TEXT,
+                        Description TEXT,
+                        DayPassPriceUsd REAL,
+                        Longitude REAL,
+                        Latitude REAL,
+                        Trailmapurl TEXT,
+                        Parklogourl TEXT,
+                        Maxvisitors INTEGER DEFAULT 200,
+                        Currentvisitors INTEGER DEFAULT 0,
+                        Currentvisitorschildren INTEGER DEFAULT 0,
+                        Currentvisitorsadults INTEGER DEFAULT 0,
+                        Maxcampsites INTEGER DEFAULT 100,
+                        State TEXT,
+                        Pic1url TEXT,
+                        Pic2url TEXT,
+                        Pic3url TEXT,
+                        Pic4url TEXT,
+                        Pic5url TEXT,
+                        Pic6url TEXT,
+                        Pic7url TEXT,
+                        Pic8url TEXT,
+                        Pic9url TEXT,
+                        Isnationalpark TEXT,
+                        Isstatepark TEXT,
+                        Hqbranchid TEXT,
+                        Mountainbikes INTEGER,
+                        Camping INTEGER,
+                        Rafting INTEGER,
+                        Canoeing INTEGER,
+                        Frisbee INTEGER,
+                        Iscanadian INTEGER,
+                        Ismexican INTEGER,
+                        Motocross INTEGER,
+                        Cabins INTEGER,
+                        Tents INTEGER,
+                        Skiing INTEGER,
+                        AverageRating REAL,
+                        Id TEXT,
+                        Reviews TEXT,
+                        Currentcampsites INTEGER DEFAULT 0
+                    );";
+                    cmd.ExecuteNonQuery();
+                }
+                Console.WriteLine("Table 'Parks' ensured.");
 
-                // Create Users table
-                string createUsersTableQuery = @"
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='TestUsers' and xtype='U')
-                CREATE TABLE TestUsers (
-                    UserID INT IDENTITY(1,1) PRIMARY KEY,
-                    Username NVARCHAR(50) NOT NULL,
-                    Email NVARCHAR(100),
-                    CreatedAt DATETIME DEFAULT GETDATE()
-                );";
-                command.CommandText = createUsersTableQuery;
-                command.ExecuteNonQuery();
-                Console.WriteLine("Table 'TestUsers' created successfully OR Already Exists.");
+                // ParkReviews table
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS ParkReviews (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        ParkId INTEGER NOT NULL,
+                        UserId INTEGER NOT NULL,
+                        Description TEXT NOT NULL,
+                        Stars INTEGER,
+                        DatePosted TEXT NOT NULL,
+                        DateApproved TEXT,
+                        DateDenied TEXT,
+                        ReasonDescription TEXT,
+                        ReviewManagerId INTEGER,
+                        Useridasstring TEXT,
+                        Active INTEGER,
+                        Displayname TEXT,
+                        Fullname TEXT,
+                        ParkName TEXT,
+                        ParkIdAsString TEXT,
+                        Possource TEXT,
+                        ParkGuid TEXT,
+                        FOREIGN KEY (ParkId) REFERENCES Parks(ParkID) ON DELETE CASCADE,
+                        FOREIGN KEY (UserId) REFERENCES Users(id) ON DELETE CASCADE
+                    );";
+                    cmd.ExecuteNonQuery();
+                }
+                Console.WriteLine("Table 'ParkReviews' ensured.");
 
-                // Create Posts table
-                string createPostsTableQuery = @"
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='TestPosts' and xtype='U')
-                CREATE TABLE TestPosts (
-                    PostID INT IDENTITY(1,1) PRIMARY KEY,
-                    UserID INT,
-                    Title NVARCHAR(100) NOT NULL,
-                    Content NVARCHAR(MAX),
-                    CreatedAt DATETIME DEFAULT GETDATE(),
-                    FOREIGN KEY (UserID) REFERENCES TestUsers(UserID)
-                );";
-                command.CommandText = createPostsTableQuery;
-                command.ExecuteNonQuery();
-                Console.WriteLine("Table 'TestPosts' created successfully OR Already Exists.");
+                // Cart table
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS Cart (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        CartId INTEGER,
+                        Uid TEXT,
+                        ParkId INTEGER,
+                        ItemType TEXT,
+                        ItemDescription TEXT,
+                        Quantity INTEGER,
+                        UnitPrice REAL,
+                        TotalPrice REAL,
+                        DateAdded TEXT,
+                        IsCheckedOut INTEGER,
+                        Paymentid TEXT,
+                        Bookinginfo TEXT,
+                        Totalcartitems INTEGER,
+                        Multipleitems INTEGER,
+                        Johnstotals REAL,
+                        Transactiontotal REAL,
+                        Parkname TEXT,
+                        ResStart TEXT,
+                        ResEnd TEXT,
+                        Adults INTEGER,
+                        Children INTEGER,
+                        Tentsites INTEGER,
+                        ParkGuid TEXT,
+                        Possource TEXT,
+                        FOREIGN KEY (ParkId) REFERENCES Parks(ParkID) ON DELETE CASCADE
+                    );";
+                    cmd.ExecuteNonQuery();
+                }
+                Console.WriteLine("Table 'Cart' ensured.");
 
-                // Create Comments table
-                string createCommentsTableQuery = @"
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='TestComments' and xtype='U')
-                CREATE TABLE TestComments (
-                    CommentID INT IDENTITY(1,1) PRIMARY KEY,
-                    PostID INT,
-                    UserID INT,
-                    Content NVARCHAR(MAX),
-                    CreatedAt DATETIME DEFAULT GETDATE(),
-                    FOREIGN KEY (PostID) REFERENCES TestPosts(PostID),
-                    FOREIGN KEY (UserID) REFERENCES TestUsers(UserID)
-                );";
-                command.CommandText = createCommentsTableQuery;
-                command.ExecuteNonQuery();
-                Console.WriteLine("Table 'TestComments' created successfully OR Already Exists.");
+                // CartItem table
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS CartItem (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Cartid INTEGER,
+                        Cartitemdate TEXT,
+                        Itemvendor TEXT,
+                        Itemdescription TEXT,
+                        Itemextendedprice REAL,
+                        Itemqty INTEGER,
+                        Itemtotals REAL,
+                        Salescatid INTEGER,
+                        Productid TEXT,
+                        Shopid TEXT,
+                        Parkid TEXT,
+                        Subtotal REAL,
+                        CreatedDate TEXT,
+                        ResStart TEXT,
+                        ResEnd TEXT,
+                        Qrcodeurl TEXT,
+                        Reservationcode TEXT,
+                        Memberid TEXT,
+                        Rewardsprovider TEXT,
+                        Adults INTEGER,
+                        Children INTEGER,
+                        Statetaxpercent REAL,
+                        Statetaxauth TEXT,
+                        Ustaxpercent REAL,
+                        Ustaxtotal REAL,
+                        Statetaxtotal REAL,
+                        Itemsubtotal REAL,
+                        Parkname TEXT,
+                        Userid INTEGER,
+                        NumDays INTEGER,
+                        Parkidasstring TEXT,
+                        ParkGuid TEXT,
+                        Possource TEXT,
+                        FOREIGN KEY (Cartid) REFERENCES Cart(Id) ON DELETE CASCADE
+                    );";
+                    cmd.ExecuteNonQuery();
+                }
+                Console.WriteLine("Table 'CartItem' ensured.");
 
-                // Create a new user and grant privileges
-                string createUserQuery = @"
-                IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = N'cm_user')
-                CREATE LOGIN cm_user WITH PASSWORD = 'cm_password';
-                IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'cm_user')
-                CREATE USER cm_user FOR LOGIN cm_user;
-                EXEC sp_addrolemember N'db_owner', N'cm_user';";
-                command.CommandText = createUserQuery;
-                command.ExecuteNonQuery();
-                Console.WriteLine("User 'cm_user' created and granted privileges successfully.");
+                // Users table
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS Users (
+                        id INTEGER NOT NULL PRIMARY KEY,
+                        firstname TEXT,
+                        lastname TEXT,
+                        username TEXT,
+                        email TEXT,
+                        employee INTEGER,
+                        employeeid TEXT,
+                        microsoftid TEXT,
+                        ncrid TEXT,
+                        oracleid TEXT,
+                        azureid TEXT,
+                        plainpassword TEXT,
+                        hashedpassword TEXT,
+                        passwordtype INTEGER,
+                        jid INTEGER,
+                        profileurl TEXT,
+                        role TEXT,
+                        fullname TEXT,
+                        companyid INTEGER,
+                        resettoken TEXT,
+                        resettokenexpiration TEXT,
+                        userid INTEGER,
+                        BTN TEXT,
+                        iscertified INTEGER,
+                        groupid1 TEXT,
+                        groupid2 TEXT,
+                        groupid3 TEXT,
+                        groupid4 TEXT,
+                        groupid5 TEXT,
+                        accountstatus TEXT,
+                        accountactiondate TEXT,
+                        accountactiondescription TEXT,
+                        usertwofactorenabled INTEGER,
+                        usertwofactortype TEXT,
+                        usertwofactorkeysmsdestination TEXT,
+                        twofactorkeyemaildestination TEXT,
+                        twofactorprovider TEXT,
+                        twofactorprovidertoken TEXT,
+                        twofactorproviderauthstring TEXT
+                    );";
+                    cmd.ExecuteNonQuery();
+                }
+                Console.WriteLine("Table 'Users' ensured.");
+
+                Console.WriteLine("SQLite install completed.");
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("SQLite install error: " + ex.Message);
             }
             finally
             {
@@ -98,42 +257,5 @@ namespace T4SQLITEINSTALLER
         }
     }
 }
-        /*
-        public void MSSQLinstall()
-        {
-            string MyConnectionString = "ConnectionString=127.0.0.1;Catalog=COCKY;Username=sa;Password=*Columbia1";
-            //STEP0 -> ASK FOR SIMPLEX(SINGLE DB, OR FISMA HIGH INSTALLATION(DECOMPOSED)
 
-            //STEP1 -> CHECK IF DATABASE COCKY, COCKYSSO, COCKYSHOP AND VELOCITY EXISTS
 
-            //STEP2A -> IF SIMPLEX MODE, AND DATABASE DOESNT EXIST CREATE COCKY
-
-            //STEP2B -> IF COMPLEX MODE, AND DATABASES DONT EXIST CREATE THEM ALL AND RUN SCHEMA BUILDER IN MULTIPLE STEPS.
-
-            //STEP3 -> LOAD LIST DATA INTO THE DATABASE
-
-        }
-
-    } }
-/*static void BuildProducts() 
-    { 
-    string connectionString = "server=localhost;port=3307;database=cm_db;uid=cm_user;pwd=CockyMoviePassword;";
-   
-    using (MySqlConnection conn = new MySqlConnection(connectionString)) 
-    { 
-    conn.Open(); 
-    foreach (var product in T4LISTS.products) 
-    { 
-    string query = "INSERT INTO Products (ProductName, Price) VALUES (@ProductName, @Price)"; 
-    using (MySqlCommand cmd = new MySqlCommand(query, conn)) 
-    { 
-    cmd.Parameters.AddWithValue("@ProductName", product.ProductName); 
-    cmd.Parameters.AddWithValue("@Price", product.Price); 
-    cmd.ExecuteNonQuery(); 
-    } 
-    } 
-    } 
-    Console.WriteLine("Products have been inserted into the database."); 
-    }
-}
-}*/
